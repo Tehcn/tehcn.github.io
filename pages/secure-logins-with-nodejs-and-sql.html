@@ -1,0 +1,117 @@
+<section id="background">
+    <h3>Some Background</h3>
+    <p>
+        I've seen some pretty atrocious code produced by amateur backend devs... of course, I was once one of these
+        people. Thankfully, I often discuss projects I'm working on with my dad (who's been in the industry for decades)
+        and he was able to correct some of my harmful practices. Some were worse than others, one of the worse ones
+        being using JSON files as databases for user data. Worst of all, I stored passwords of my users in
+        <i>plaintext</i>... yeah. So, this article exists to help new backend devs avoid some serious security flaws
+        that many people experience.
+    </p>
+</section>
+<section id="step-1">
+    <h3>Step 1: Setup Code</h3>
+    <p>
+        To begin, if you want to follow along with the code you have to have NodeJS v12 or greater for it to be
+        guaranteed to work (if you don't make any mistakes). This guide will NOT go over how to install NodeJS.
+    </p>
+    <p>
+        Create a new folder wherever you store your code and open it however you like. Create a file called
+        <code>index.js</code>, as this will be the entrypoint for our program.
+    </p>
+    <p>
+        Initialize npm
+    <pre>
+
+<code class="language-shell">$ npm init -y</code>
+
+</pre>
+    We will use the npm packages <code>mysql</code> and <code>express</code>
+    <pre>
+
+<code class="language-shell">$ npm i mysql express</code>
+
+</pre>
+    To finish setup, let's check that everything's working as expected
+    <pre>
+
+<code class="language-js">// index.js
+const express = require('express');
+const mysql = require('mysql');
+
+const app = express();
+
+app.get('/', (req, res) => {
+res.send('Hello World!');
+});
+
+const port = 3000;
+
+app.listen(port, () => { console.log(\`server running on port \${port}\`)});</code>
+
+</pre>
+    If that code runs without errors, and if you can (if you're working locally) visit <a
+        href="http://localhost:300">http://localhost:3000/</a>, then, congratulations, you've finished half of the
+    setup. Now, for the arguably harder part.
+    </p>
+</section>
+<section id="step-2">
+    <h3>Step 2: Setup SQL Server</h3>
+    <p>
+        If you already have SQL Server and SSMS setup, feel free to skip this step and move on to <a href="#step-3">Step
+            3: Creating a Database and Tables</a> Anyway, goto <a
+            href="https://www.microsoft.com/en-us/sql-server/sql-server-downloads" target="_blank">MSSQL Downloads</a>,
+        and download either the Express or Developer edition. Personally, I recommend that you use Express, since you
+        can use it in production for free, unlike Developer. Finish installing MSSQL Server.
+    </p>
+    <p>
+        Now we'll install SQL Server Management Studio (SSMS). Download it <a
+            href="https://aka.ms/ssmsfullsetup">here</a>. Honestly, it shouldn't be too difficult to install, just
+        follow the steps and do what it tells you to.
+    </p>
+</section>
+<section id="step-3">
+    <h3>Step 3: Creating a Database and Tables</h3>
+    <p>
+        First, we should create a new login, so our later program can actually connect to the database we are about to
+        make. To do this open a T-SQL terminal and type the following command (replacing &lt;uname&gt; with the username
+        you want the login to have)
+    <pre>
+
+<code class="language-sql">CREATE LOGIN &lt;uname&gt;
+WITH PASSWORD = 'temppwd' MUST_CHANGE,  
+CREDENTIAL = RestrictedFaculty,
+CHECK_EXPIRATION = ON;
+GO
+</code>
+
+</pre>
+    Next we run the following snippet to create a user that we can give permissions to (replacing &lt;uname&gt; with
+    whatever you called the login)
+    <pre>
+
+<code class="language-sql">CREATE USER &lt;uname&gt; FOR LOGIN &lt;uname&gt;;  
+GO   
+</code>
+
+</pre>
+    You should login from SSMS where you will gave to change the password. Make sure it's at least 16 characters long.
+    </p>
+    We are finally at the point where we should consider what demo to make to prove that we can actually make a
+    functional project with these technologies. A good and relatively simple app to implement is a todo app, so let's do
+    that!
+    Creating a database is actually really simple. In SSMS, click the <code>New Query</code> button, and put the below
+    snippet into the text window that appears
+    <pre>
+
+<code class="language-sql">CREATE DATABASE todoDB;
+GO
+</code>
+
+</pre>
+    Next, we'll create two tables: a user table and a todo table. Todo so (see what I did there) we'll run two queries.
+    If you still have the query window open delete everything in it, otherwise click the <code>New Query</code> button
+    again, and type the following statements
+
+    </p>
+</section>
