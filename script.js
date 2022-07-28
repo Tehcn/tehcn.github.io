@@ -82,6 +82,10 @@ function getArticles() {
             'url': '/pages/projects/projects.html'
         },
         {
+            'name': 'PyOS',
+            'url': '/pages/projects/pyos/about.html'
+        },
+        {
             'name': 'PyOS - Getting Started',
             'url': '/pages/projects/pyos/getting-started.html'
         }
