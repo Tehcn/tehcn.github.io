@@ -6,6 +6,8 @@ function setup() {
     article = document.querySelector('article');
     if (window.location.hash != '') {
         loadArticle(window.location.hash);
+    } else {
+        loadArticle('home');
     }
     // loadArticle('Secure Logins with NodeJS and SQL');
 }
@@ -29,15 +31,15 @@ async function loadArticle(a) {
     const matches = pageContent.matchAll(/\{\{ ?(.*?)? ?\}\}/mg);
     let done = false;
 
-    while(!done) {
-        const match = matches.next() 
-        if(match.done) { done = true; break; }
+    while (!done) {
+        const match = matches.next()
+        if (match.done) { done = true; break; }
         evalst.push(match.value);
     }
 
     const evals = [];
 
-    evalst.forEach(e => { evals.push({'js': e[1], 'selector': e[0], 'evaluation': eval(e[1]) }); });
+    evalst.forEach(e => { evals.push({ 'js': e[1], 'selector': e[0], 'evaluation': eval(e[1]) }); });
 
     evals.forEach(e => { processedPageContent = processedPageContent.replace(e.selector, e.evaluation) });
 
