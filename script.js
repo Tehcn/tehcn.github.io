@@ -28,14 +28,23 @@ async function loadArticle(a) {
 
     const evalst = [];
 
-    const matches = pageContent.matchAll(/\{\{ ?(.*?)? ?\}\}/mg);
-    let done = false;
+    const regex = /{{ ?(.*?)? ?}}/gims;
 
-    while (!done) {
-        const match = matches.next()
-        if (match.done) { done = true; break; }
-        evalst.push(match.value);
+    let m;
+
+    while ((m = regex.exec(pageContent)) !== null) {
+        // This is necessary to avoid infinite loops with zero-width matches
+        if (m.index === regex.lastIndex) {
+            regex.lastIndex++;
+        }
+
+        // The result can be accessed through the `m`-variable.
+        m.forEach((match) => {
+            if (match[0] == '{' && match[1] == '{')
+                evalst.push([match, match.replace('{{', '').replace('}}', '').trim()])
+        });
     }
+
 
     const evals = [];
 
