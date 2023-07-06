@@ -2,14 +2,13 @@ window.onload = setup;
 
 let article;
 
-function setup() {
+async function setup() {
     article = document.querySelector('article');
     if (window.location.hash != '') {
         loadArticle(window.location.hash);
     } else {
         loadArticle('home');
     }
-    // loadArticle('Secure Logins with NodeJS and SQL');
 }
 
 function setArticle(a) {
@@ -18,11 +17,11 @@ function setArticle(a) {
 }
 
 async function loadArticle(a) {
-    const la = getArticle(a);
+    const la = await getArticle(a);
 
     console.log(`Loading article '${la.name}'`);
 
-    const pageContent = await (await fetch(la.url)).text();
+    const pageContent = la.content;
 
     let processedPageContent = pageContent;
 
@@ -57,48 +56,78 @@ async function loadArticle(a) {
 	${processedPageContent}
 	`;
 
-    window.location.hash = `#${la.url.replace('/pages/', '').replace('.html', '')}`;
+    window.location.hash = la.url
 
     setArticle(content);
 }
 
-function getArticle(ta) {
-    if (ta.endsWith('.html'))
-        return getArticles().filter(
-            a => a.url == ta.replace('#', ''))[0];
-    return getArticles().filter(
-        a => a.url == '/pages/' + ta.replace('#', '') + '.html')[0];
+async function getArticle(ta) {
+    ta = ta.replace('#', '');
+    let name = ta.replace(/\.html/gim, '').replace(/-/g , ' ');
+    name = name.split('/')[name.split('/').length - 1];
+    name = toTitleCase(name);
+    let url;
+    if(ta.endsWith('.html'))
+        url = ta;
+    else
+        url = ta + '.html';
+
+    return {
+        content: await (await fetch('pages/' + url)).text(),
+        name: name,
+        url: url
+    };
 }
 
-function getArticles() {
-    return [
-        {
-            'name': 'Secure Logins with NodeJS and SQL',
-            'url': '/pages/secure-logins-with-nodejs-and-sql.html'
-        },
-        {
-            'name': 'Articles',
-            'url': '/pages/articles.html'
-        },
-        {
-            'name': 'About',
-            'url': '/pages/about.html'
-        },
-        {
-            'name': 'Home',
-            'url': '/pages/home.html'
-        },
-        {
-            'name': 'Projects',
-            'url': '/pages/projects/projects.html'
-        },
-        {
-            'name': 'PyOS',
-            'url': '/pages/projects/pyos/about.html'
-        },
-        {
-            'name': 'PyOS - Getting Started',
-            'url': '/pages/projects/pyos/getting-started.html'
-        }
+window.addEventListener('hashchange', (e) => {
+    if(e.isTrusted) {
+        console.log(e.oldURL, e.newURL);
+        loadArticle(window.location.hash);
+    }
+})
+
+function toTitleCase(str) {
+    let noCapWords = [
+        "a",
+        "and",
+        "as",
+        "at",
+        "buy",
+        "by",
+        "down",
+        "for",
+        "from",
+        "if",
+        "in",
+        "into",
+        "like",
+        "near",
+        "nor",
+        "of",
+        "off",
+        "on",
+        "once",
+        "onto",
+        "or",
+        "over",
+        "past",
+        "so",
+        "than",
+        "that",
+        "to",
+        "upon",
+        "when",
+        "with",
+        "yet"
     ];
+
+    let arr = [];
+    let split = str.split(' ');
+
+    for(let i=0;i<split.length;i++) {
+        if(i == 0) arr.push(split[i].charAt(0).toUpperCase() + split[i].slice(1));
+        else if(!noCapWords.includes(split[i])) arr.push(split[i].charAt(0).toUpperCase() + split[i].slice(1));
+        else arr.push(split[i])
+    }
+    return arr.join(' ');
 }
