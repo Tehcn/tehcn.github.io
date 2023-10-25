@@ -1,0 +1,30 @@
+@import './base.css';
+
+#app {
+  max-width: 1280px;
+  margin: 0 auto;
+
+  font-weight: normal;
+}
+
+a,
+.accent {
+  text-decoration: none;
+  color: hsla(190, 100%, 47%, 1);
+  transition: 0.4s;
+  padding: 0 2px;
+}
+
+@media (hover: hover) {
+  a:hover {
+    background-color: hsla(190, 100%, 47%, 0.2);
+    color: hsla(190, 100%, 63%, 1);
+  }
+}
+
+@media (min-width: 1024px) {
+  #app {
+    display: grid;
+    grid-template-rows: 1fr 1fr;
+  }
+}
